@@ -1,0 +1,4 @@
+sdk.dir=/Users/samuelavila/Library/Android/sdk
+flutter.sdk=/Users/samuelavila/fvm/versions/stable
+
+GOOGLE_MAPS_API_KEY=YOUR_API_KEY_HERE
