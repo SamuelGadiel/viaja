@@ -10,6 +10,9 @@ import 'package:latlong2/latlong.dart' as lt;
 import 'package:unicons/unicons.dart';
 
 import '../../../core/shared/widgets/app_logo.dart';
+import '../../nerby_places/domain/entities/nerby_places_parameters.dart';
+import '../../nerby_places/presentation/controllers/nerby_places_bloc/events/get_nerby_places_event.dart';
+import '../../nerby_places/presentation/controllers/nerby_places_bloc/nerby_places_bloc.dart';
 import '../../place_image/domain/entities/place_image_parameters.dart';
 import '../../place_image/presentation/controllers/place_image_bloc/events/get_place_image_event.dart';
 import '../../place_image/presentation/controllers/place_image_bloc/place_image_bloc.dart';
@@ -36,6 +39,8 @@ class _HomePageState extends State<HomePage> {
   final placeImageBloc = Modular.get<PlaceImageBloc>();
   final placeImageStore = Modular.get<PlaceImageStore>();
 
+  final nearbyPlacesBloc = Modular.get<NerbyPlacesBloc>();
+
   final suggestionsBoxController = SuggestionsBoxController();
 
   final MapController mapController = MapController();
@@ -59,6 +64,11 @@ class _HomePageState extends State<HomePage> {
         valueListenable: predictionDetailsNotifier,
         builder: (context, state, child) {
           if (state is GetPredictionDetailsSuccessState) {
+            nearbyPlacesBloc.add(GetNerbyPlacesEvent(NerbyPlacesParameters(
+              lat: state.predictionDetails.lat,
+              long: state.predictionDetails.long,
+            )));
+
             placeImageStore.images.clear();
             for (final photoReference in state.predictionDetails.photosReference) {
               placeImageBloc.add(GetPlaceImageEvent(PlaceImageParameters(photoReference)));
@@ -102,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              if (state is GetPredictionDetailsSuccessState) const PlaceInformationBar(),
+              if (state is GetPredictionDetailsSuccessState) PlaceInformationBar(state.predictionDetails),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 padding: state is PredictionDetailsInitialState ? EdgeInsets.only(top: MediaQuery.sizeOf(context).height * 0.25) : EdgeInsets.zero,

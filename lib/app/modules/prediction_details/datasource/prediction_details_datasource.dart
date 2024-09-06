@@ -28,7 +28,7 @@ class PredictionDetailsDatasource {
 
       switch (response.statusCode) {
         case 200:
-          return Right(PredictionDetailsMapper.fromJson(response.data));
+          return Right(PredictionDetailsMapper.fromJson(response.data['result']));
         default:
           throw PredictionDetailsError('Não foi possivel obter os detalhes do local');
       }
